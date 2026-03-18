@@ -1,0 +1,71 @@
+services:
+  collect_raw_now:
+    build:
+      context: .
+      dockerfile: collect_data_raw/Dockerfile
+    container_name: collect_raw_now
+    restart: unless-stopped
+    env_file:
+      - ./app.env
+    environment:
+      WORKER_RULE: "now"
+
+  collect_raw_before:
+    build:
+      context: .
+      dockerfile: collect_data_raw/Dockerfile
+    container_name: collect_raw_before
+    restart: unless-stopped
+    env_file:
+      - ./app.env
+    environment:
+      WORKER_RULE: "before"
+
+  collect_game_info:
+    build:
+      context: .
+      dockerfile: collect_game_info/Dockerfile
+    container_name: collect_game_info
+    restart: unless-stopped
+    env_file:
+      - ./app.env
+
+  generate_stats_now:
+    build:
+      context: .
+      dockerfile: generate_statistics/Dockerfile
+    container_name: generate_stats_now
+    restart: unless-stopped
+    env_file:
+      - ./app.env
+    environment:
+      WORKER_RULE: "now"
+
+  generate_stats_before:
+    build:
+      context: .
+      dockerfile: generate_statistics/Dockerfile
+    container_name: generate_stats_before
+    restart: unless-stopped
+    env_file:
+      - ./app.env
+    environment:
+      WORKER_RULE: "before"
+
+  generate_user_report:
+    build:
+      context: .
+      dockerfile: generate_user_report/Dockerfile
+    container_name: generate_user_report
+    restart: unless-stopped
+    env_file:
+      - ./app.env
+
+  er_db_sync_worker:
+    build:
+      context: .
+      dockerfile: data_sync_agent/Dockerfile
+    container_name: er_db_sync_worker
+    restart: unless-stopped
+    env_file:
+      - ./app.env

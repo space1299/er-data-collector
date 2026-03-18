@@ -1,0 +1,39 @@
+# Local configuration
+app.env
+.env
+.env.*
+!app.env.example
+
+# Local artifacts
+etc/
+logs/
+log/
+tmp/
+temp/
+cache/
+.pytest_cache/
+.mypy_cache/
+
+# IDE / Python
+.venv/
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Generated outputs
+*.log
+*.out
+*.pid
+*.seed
+*.csv
+*.sqlite
+*.db
+*.bak
+*.tmp
+
+# Keep dependency manifests
+*.txt
+!requirements.txt
