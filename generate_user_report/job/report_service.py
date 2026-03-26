@@ -23,7 +23,6 @@ from common.models.report_models import (
     UserReportMeta,
 )
 from common.db.access import view_db
-from common.db.client import get_client
 from .aggregate import (
     aggregate_character_slices,
     parse_start_dtm_utc,
@@ -350,6 +349,7 @@ def fetch_er_data(
 
 def build_report_payload(
     *,
+    client,
     job: Dict[str, Any],
     canonical_nickname: str,
     stats_resp: Optional[UserStatsResponse],
@@ -365,7 +365,7 @@ def build_report_payload(
     if rep_major is None or rep_minor is None:
         raise ValueError("representative version not found")
 
-    version_season = resolve_version_season(season_id)
+    version_season = resolve_version_season(client, season_id)
     if version_season is None:
         raise ValueError("versionSeason not resolved")
 
@@ -390,18 +390,15 @@ def build_report_payload(
     return doc, dedupe_key
 
 
-def resolve_version_season(season_id: int) -> Optional[int]:
+def resolve_version_season(client, season_id: int) -> Optional[int]:
     # Prefer view.versions by season_id; fallback to env for now.
-    internal_uri = os.environ.get("MONGO_INTERNAL_URI")
-    if internal_uri:
-        try:
-            client = get_client(db_url=internal_uri)
-            col_versions = view_db(client)["versions"]
-            doc = col_versions.find_one({"season_id": int(season_id)})
-            if doc and doc.get("season") is not None:
-                return int(doc.get("season"))
-        except Exception:
-            pass
+    try:
+        col_versions = view_db(client)["versions"]
+        doc = col_versions.find_one({"season_id": int(season_id)})
+        if doc and doc.get("season") is not None:
+            return int(doc.get("season"))
+    except Exception:
+        pass
 
     default_season = os.environ.get("DEFAULT_VERSION_SEASON")
     if default_season:

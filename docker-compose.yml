@@ -6,7 +6,7 @@ services:
     container_name: collect_raw_now
     restart: unless-stopped
     env_file:
-      - ./app.env
+      - ./.env
     environment:
       WORKER_RULE: "now"
 
@@ -17,7 +17,7 @@ services:
     container_name: collect_raw_before
     restart: unless-stopped
     env_file:
-      - ./app.env
+      - ./.env
     environment:
       WORKER_RULE: "before"
 
@@ -28,7 +28,7 @@ services:
     container_name: collect_game_info
     restart: unless-stopped
     env_file:
-      - ./app.env
+      - ./.env
 
   generate_stats_now:
     build:
@@ -37,7 +37,7 @@ services:
     container_name: generate_stats_now
     restart: unless-stopped
     env_file:
-      - ./app.env
+      - ./.env
     environment:
       WORKER_RULE: "now"
 
@@ -48,7 +48,7 @@ services:
     container_name: generate_stats_before
     restart: unless-stopped
     env_file:
-      - ./app.env
+      - ./.env
     environment:
       WORKER_RULE: "before"
 
@@ -59,13 +59,4 @@ services:
     container_name: generate_user_report
     restart: unless-stopped
     env_file:
-      - ./app.env
-
-  er_db_sync_worker:
-    build:
-      context: .
-      dockerfile: data_sync_agent/Dockerfile
-    container_name: er_db_sync_worker
-    restart: unless-stopped
-    env_file:
-      - ./app.env
+      - ./.env

@@ -102,7 +102,7 @@ def _fetch_tier_stat(
 def fill_compare_for_report(
     report_doc: UserReportDoc,
     *,
-    stats_client,
+    client,
 ) -> Tuple[UserReportDoc, Dict[str, Any]]:
     report = report_doc
 
@@ -114,7 +114,7 @@ def fill_compare_for_report(
     version_minor = report.meta.versionMinor
     db_name = _build_db_name(version_season, version_major, version_minor)
     col_stats = raw_db(
-        stats_client,
+        client,
         f"{version_season}.{version_major}.{version_minor}",
     )["character_statistics"]
 

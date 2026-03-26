@@ -1,8 +1,11 @@
 # Local configuration
-app.env
 .env
 .env.*
-!app.env.example
+!.env.example
+AGENTS.md
+CLAUDE.md
+docs/
+archive/
 
 # Local artifacts
 etc/

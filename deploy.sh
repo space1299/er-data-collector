@@ -12,6 +12,7 @@ set -e
 # --- settings ---
 MAIN_BRANCH="master"
 COMPOSE_FILE="docker-compose.yml"
+ENV_FILE=".env"
 # -----------------
 
 TARGETS_TO_DEPLOY="$1"
@@ -53,11 +54,16 @@ echo "--------------------------------------------------------"
 # 3. Deploy services (Docker Compose)
 SERVICES=$(echo "$TARGETS_TO_DEPLOY" | tr ',' ' ')
 
+if [ ! -f "${ENV_FILE}" ]; then
+  echo "Missing ${ENV_FILE}. Create it before deployment."
+  exit 1
+fi
+
 echo "3. Pulling latest images for: ${SERVICES}"
-docker compose -f "${COMPOSE_FILE}" pull ${SERVICES}
+docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" pull ${SERVICES}
 echo " "
 echo "Rebuilding and restarting services: ${SERVICES}"
-docker compose -f "${COMPOSE_FILE}" up -d --build ${SERVICES}
+docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" up -d --build ${SERVICES}
 echo "--------------------------------------------------------"
 
 echo "========================================================"

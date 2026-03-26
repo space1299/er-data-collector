@@ -1,9 +1,8 @@
 import argparse
-import os
 import time
 from dataclasses import dataclass
 
-from common.db.access import info_db, report_db, view_db
+from common.db.access import report_db, view_db
 from common.db.client import get_client
 from common.db.init import ensure_indexes
 from common.logger import setup_logger
@@ -80,10 +79,8 @@ def main() -> None:
     args = _parse_args()
     settings = build_settings()
     client = None
-    stats_client = None
     report_db_handle = None
     db_view_handle = None
-    db_info_handle = None
 
     worker_id = _build_worker_id(settings.worker_lock_id)
     logger.info("[워커] 시작: worker_id=%s, max_retry=%s", worker_id, settings.max_retry)
@@ -93,14 +90,9 @@ def main() -> None:
             if client is None:
                 try:
                     client = get_client(db_url=settings.db_url)
-                    internal_uri = os.environ.get("MONGO_INTERNAL_URI")
-                    if not internal_uri:
-                        raise RuntimeError("missing env: MONGO_INTERNAL_URI")
-                    stats_client = get_client(db_url=internal_uri)
                     ensure_indexes(client)
                     report_db_handle = report_db(client)
                     db_view_handle = view_db(client)
-                    db_info_handle = info_db(stats_client)
                     ensure_job_indexes(report_db_handle)
                 except Exception as e:
                     logger.exception("[워커] DB 연결 실패: %s", e)
@@ -133,6 +125,7 @@ def main() -> None:
                 )
 
                 report_doc, dedupe_key = build_report_payload(
+                    client=client,
                     job=job,
                     canonical_nickname=canonical_nickname,
                     stats_resp=stats_resp,
@@ -147,7 +140,7 @@ def main() -> None:
 
                 report_doc, compare_result = fill_compare_for_report(
                     report_doc,
-                    stats_client=stats_client,
+                    client=client,
                 )
                 logger.info(
                     "[비교] dedupe_key=%s nickname=%s seasonId=%s matchingMode=%s slices=%s filled=%s missing=%s db=%s",

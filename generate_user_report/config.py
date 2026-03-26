@@ -1,7 +1,7 @@
 import os
 
 # log settings
-ER_DATA_LOG_FILE = os.environ.get("ER_DATA_LOG_FILE", "./logs/generate_user_report.log")
+ER_DATA_LOG_FILE = os.environ.get("ER_DATA_LOG_FILE", "./logs/er_data_collector.log")
 
 # API settings
 API_URL_V1 = os.environ.get("API_URL_V1", "https://open-api.bser.io/v1")
@@ -9,7 +9,7 @@ API_URL_V2 = os.environ.get("API_URL_V2", "https://open-api.bser.io/v2")
 API_KEY = os.environ.get("API_KEY")
 
 # MongoDB settings
-DB_URL = os.environ["MONGO_EXTERNAL_URI"]
+DB_URL = os.environ["MONGO_URI"]
 
 # report settings
 N_TARGET = int(os.environ.get("REPORT_N_TARGET", "50"))
